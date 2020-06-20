@@ -2,33 +2,21 @@ const connection = require('../database/connection');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const aws = require('aws-sdk');
+const jwt = require('jsonwebtoken');
 
+function parseToken(token){
+  var decode = jwt.verify(token, process.env.SECRET);
+  return decode;
+};
 
 module.exports = {
   /* 
   * Lista as lojas cadastradas 
   */
   async index(request, response) {
-    const userid = request.headers.userid;
-    const password = request.headers.password;
-
     const filterObj = {...request.query};
     const removeFields = ['page', 'sort', 'limit', 'direc'];
     removeFields.forEach(el => delete filterObj[el]);
-
-    const user = await connection('users')
-      .where({
-          'userid': userid
-      })
-      .select('passwd')
-      .first();
-
-    if ((!user) || (!(await bcrypt.compare(password, user.passwd)))) {
-      return response.status(400).json({
-          error: 'Você não tem permissão para listar lojas!'
-        });
-    }
-
 
     if ((request.query.sort) && (request.query.direc)) {
       const stores = await connection('stores').where(filterObj).select('*').orderBy(request.query.sort, request.query.direc);
@@ -43,21 +31,9 @@ module.exports = {
   * Cria o cadastro da loja 
   */
   async create(request, response) {
-    const userid = request.headers.userid;
-    const password = request.headers.password;
-
-    const user = await connection('users')
-      .where({
-          'userid': userid
-      })
-      .select('passwd')
-      .first();
-
-    if ((!user) || (!(await bcrypt.compare(password, user.passwd)))) {
-      return response.status(400).json({
-          error: 'Você não tem permissão para criar lojas!'
-        });
-    }
+    const token = request.headers.authorization;
+    const data = parseToken(token);  
+    const userid = data.userid;
 
     const {name, description, lat, lon, categoria} = request.body;
     const { key: logoname, location: logourl} = request.file;
@@ -92,8 +68,10 @@ module.exports = {
   */
   async delete(request, response) {
     const {storeid} = request.params;
-    const userid = request.headers.userid;
-    const password = request.headers.password;
+    const token = request.headers.authorization;
+    const data = parseToken(token);  
+    const userid = data.userid;
+
     const s3 = new aws.S3();
 
     const store = await connection('stores')
@@ -101,14 +79,7 @@ module.exports = {
         .select('userid','logoname')
         .first();
     
-    const user = await connection('users')
-        .where({
-            'userid': userid
-        })
-        .select('passwd')
-        .first();
-  
-    if ((store.userid != userid) || (!user) || (!(await bcrypt.compare(password, user.passwd)))) {
+    if (store.userid != userid) {
         return response.status(400).json({
             error: 'Você não possui permissão para realizar está tarefa.'
           });
@@ -131,29 +102,22 @@ module.exports = {
   /* 
   * Atualiza o cadastro da loja 
   */
-
   async update(request, response) {
     const {storeid} = request.params;
-    const userid = request.headers.userid;
-    const password = request.headers.password;
+    const token = request.headers.authorization;
+    const data = parseToken(token);  
+    const userid = data.userid;
   
     const store = await connection('stores')
     .where('storeid', storeid)
     .select('userid')
     .first();
 
-    const user = await connection('users')
-        .where({
-            'userid': userid
-        })
-        .select('passwd')
-        .first();
-
-    if ((store.userid != userid) || (!user) || (!(await bcrypt.compare(password, user.passwd)))) {
-        return response.status(400).json({
-            error: 'Você não possui permissão para realizar está tarefa.'
-          });
-    };
+    if (store.userid != userid) {
+      return response.status(400).json({
+          error: 'Você não possui permissão para realizar está tarefa.'
+        });
+  };
 
     const {name, description, lat, lon, categoria} = request.body;
 

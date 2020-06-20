@@ -9,27 +9,27 @@ const StoreController = require('./controllers/StoreController');
 const routes = express.Router();
 
 // Lista usuários
-routes.get('/users', UserController.index);
+routes.get('/users', SessionController.autMid, UserController.index);
 
 // Cria usuário
 routes.post('/users', UserController.create);
 
 // Atualizar usuário
-routes.post('/users/update' , UserController.update);
+routes.post('/users/update' ,SessionController.autMid, UserController.update);
 
 // Cria uma sessão
 routes.post('/session', SessionController.create);
 
 // Cria uma Loja
-routes.post('/store', multer(multerConfig).single("file"), StoreController.create);
+routes.post('/store', SessionController.autMid, multer(multerConfig).single("file"), StoreController.create);
 
 // Lista Lojas
-routes.get('/store', StoreController.index);
+routes.get('/store', SessionController.autMid, StoreController.index);
 
 // Deletar uma Loja
-routes.delete('/store/:storeid' , StoreController.delete);
+routes.delete('/store/:storeid' , SessionController.autMid, StoreController.delete);
 
 // Editar uma Loja
-routes.post('/store/:storeid' , StoreController.update);
+routes.post('/store/:storeid' , SessionController.autMid, StoreController.update);
 
 module.exports = routes;

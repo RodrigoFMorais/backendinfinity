@@ -2,25 +2,15 @@ const connection = require('../database/connection');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 
+function parseToken(token){
+  var decode = jwt.verify(token, process.env.SECRET);
+  return decode;
+};
 
 module.exports = {
   async index(request, response) {
-    const userid = request.headers.userid;
-    const password = request.headers.password;
-
-    const user = await connection('users')
-      .where({
-          'userid': userid
-      })
-      .select('passwd')
-      .first();
-
-    if ((!user) || (!(await bcrypt.compare(password, user.passwd)))) {
-      return response.status(400).json({
-          error: 'Você não tem permissão para listar usuários!'
-        });
-    }
 
     const users = await connection('users').select('name', 'userid', 'email', 'cpf');
   
@@ -56,21 +46,9 @@ module.exports = {
   },
 
   async update(request, response) {
-    const userid = request.headers.userid;
-    const password = request.headers.password;
-
-    const user = await connection('users')
-        .where({
-            'userid': userid
-        })
-        .select('passwd')
-        .first();
-
-    if ((!user) || (!(await bcrypt.compare(password, user.passwd)))) {
-        return response.status(400).json({
-            error: 'Você não possui permissão para realizar está tarefa.'
-          });
-    };
+    const token = request.headers.authorization;
+    const data = parseToken(token);  
+    const userid = data.userid;
 
     const {name, email, telephone, cpf} = request.body;
 
