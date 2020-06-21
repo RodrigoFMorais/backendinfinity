@@ -12,7 +12,7 @@ const routes = express.Router();
 routes.get('/users', SessionController.autMid, UserController.index);
 
 // Lista usuários
-routes.get('/viewuser', SessionController.autMid, UserController.viewuser);
+routes.get('/viewuser/:token', SessionController.autMid, UserController.viewuser);
 
 // Cria usuário
 routes.post('/users', UserController.create);

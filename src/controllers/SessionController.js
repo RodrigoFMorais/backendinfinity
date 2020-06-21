@@ -45,7 +45,7 @@ module.exports = {
 
 
     async autMid(request, response, next) {
-        const token = request.headers.authorization;
+        const {token} = request.params;
 
         if (token) {
             

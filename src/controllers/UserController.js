@@ -46,7 +46,7 @@ module.exports = {
   },
 
   async update(request, response) {
-    const token = request.headers.authorization;
+    const token = request.body.authorization;
     const data = parseToken(token);  
     const userid = data.userid;
 
@@ -72,8 +72,8 @@ module.exports = {
 
 
   async viewuser(request, response) {
-    
-    const token = request.headers.authorization;
+    const {token} = request.params;
+    //const token = request.body.authorization;
     const data = parseToken(token);  
     const userid = data.userid;
 
