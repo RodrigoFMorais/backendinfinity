@@ -31,7 +31,7 @@ module.exports = {
   * Cria o cadastro da loja 
   */
   async create(request, response) {
-    const token = request.body.authorization;
+    const {token} = request.params;
     const data = parseToken(token);  
     const userid = data.userid;
 
@@ -67,8 +67,7 @@ module.exports = {
   * Deleta o cadastro da loja 
   */
   async delete(request, response) {
-    const {storeid} = request.params;
-    const token = request.body.authorization;
+    const {storeid,token} = request.params;
     const data = parseToken(token);  
     const userid = data.userid;
 
@@ -103,8 +102,7 @@ module.exports = {
   * Atualiza o cadastro da loja 
   */
   async update(request, response) {
-    const {storeid} = request.params;
-    const token = request.body.authorization;
+    const {storeid,token} = request.params;
     const data = parseToken(token);  
     const userid = data.userid;
   
