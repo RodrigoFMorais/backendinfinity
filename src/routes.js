@@ -11,6 +11,9 @@ const routes = express.Router();
 // Lista usuários
 routes.get('/users', SessionController.autMid, UserController.index);
 
+// Lista usuários
+routes.get('/viewuser', SessionController.autMid, UserController.viewuser);
+
 // Cria usuário
 routes.post('/users', UserController.create);
 

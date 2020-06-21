@@ -68,6 +68,23 @@ module.exports = {
     }).then(function(){
       return response.json("Atulização realizada com sucesso!"); 
     });
+  },
+
+
+  async viewuser(request, response) {
+    
+    const token = request.headers.authorization;
+    const data = parseToken(token);  
+    const userid = data.userid;
+
+    const user = await connection('users')
+        .where({'userid': userid})
+        .select('*')
+        .first();
+
+    
+    return response.status(200).json(user);
   }
+
 
 };
