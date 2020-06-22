@@ -36,10 +36,10 @@ module.exports = {
     const userid = data.userid;
 
     const {name, description, lat, lon, categoria} = request.body;
-    //const { key: logoname, location: logourl} = request.file;
+    const { key: logoname, location: logourl} = request.file;
 
-    //const logname = " ";
-    //const logurl = " ";
+    const logname = " ";
+    const logurl = " ";
 
     if ((!name) || (!description) || (!lat) || (!lon) || (!categoria)) {
       return response.status(400).json("Todos aqui os campos são obrigatórios!");
