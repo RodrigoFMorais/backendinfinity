@@ -31,6 +31,10 @@ module.exports = {
   * Cria o cadastro da loja 
   */
   async create(request, response) {
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    response.header('Access-Control-Allow-Credentials', true);
     const {token} = request.params;
     const data = parseToken(token);  
     const userid = data.userid;
