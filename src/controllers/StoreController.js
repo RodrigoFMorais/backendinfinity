@@ -20,7 +20,7 @@ module.exports = {
 
     if ((request.query.sort) && (request.query.direc)) {
       const stores = await connection('stores').where(filterObj).select('*').orderBy(request.query.sort, request.query.direc);
-      return response.json({stores});
+      return response.json(stores);
     }else{
       const stores = await connection('stores').where(filterObj).select('*');
       return response.json(stores);
