@@ -23,7 +23,7 @@ module.exports = {
       return response.json({stores});
     }else{
       const stores = await connection('stores').where(filterObj).select('*');
-      return response.json({stores});
+      return response.json(stores);
     }
   },
 
