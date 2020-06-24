@@ -24,7 +24,7 @@ routes.post('/users/update/:token' ,SessionController.autMid, UserController.upd
 routes.post('/session', SessionController.create);
 
 // Cria uma Loja 
-routes.post('/store/:token', SessionController.autMid, StoreController.create);
+routes.post('/store/:token', SessionController.autMid, multer(multerConfig).single("file"), StoreController.create);
 
 // Lista Lojas
 routes.get('/store/:token', SessionController.autMid, StoreController.index);

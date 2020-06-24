@@ -11,23 +11,17 @@ function parseToken(token){
 
 module.exports = {
   async index(request, response) {
-
     const users = await connection('users').select('name', 'userid', 'email', 'cpf');
-  
     return response.json({users});
   },
 
   async create(request, response) {
     const {name, password, email, telephone, cpf} = request.body;
-
     if ((!name) || (!password) || (!email) || (!telephone) || (!cpf)) {
       return response.status(422).json({erros: [{title: 'Operação não permitida', detail: 'Todos os campos são obrigatórios!'}]});
     }
-
     const userid = crypto.randomBytes(4).toString('HEX');
-  
     const passwd = await bcrypt.hash(password, saltRounds);
-  
     await connection('users').insert({
       userid,
       name,
@@ -81,7 +75,6 @@ module.exports = {
         .select('name','userid','email','telephone','cpf')
         .first();
 
-    
     return response.status(200).json(user);
   }
 

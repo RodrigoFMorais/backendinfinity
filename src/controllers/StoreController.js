@@ -19,7 +19,9 @@ module.exports = {
     removeFields.forEach(el => delete filterObj[el]);
 
     if ((request.query.sort) && (request.query.direc)) {
-      const stores = await connection('stores').where(filterObj).select('*').orderBy(request.query.sort, request.query.direc);
+      const stores = await connection('stores').where(filterObj).select('*').
+      orderBy(request.query.sort, 
+        request.query.direc);
       return response.json(stores);
     }else{
       const stores = await connection('stores').where(filterObj).select('*');
@@ -36,10 +38,7 @@ module.exports = {
     const userid = data.userid;
 
     const {name, description, lat, lon, categoria} = request.body;
- //   const { key: logoname, location: logourl} = request.file;
-
-    const logname = " ";
-    const logurl = " ";
+    const { key: logoname, location: logourl} = request.file;
 
     if ((!name) || (!description) || (!lat) || (!lon) || (!categoria)) {
       return response.status(400).json("Todos aqui os campos são obrigatórios!");
@@ -54,8 +53,8 @@ module.exports = {
       lat,
       lon,
       categoria,
-//      logoname,
-//      logourl,
+      logoname,
+      logourl,
       userid,
     }).then(function(){
       return response.json({storeid}); 
@@ -74,7 +73,7 @@ module.exports = {
     const data = parseToken(token);  
     const userid = data.userid;
 
-    //const s3 = new aws.S3();
+    const s3 = new aws.S3();
 
     const store = await connection('stores')
         .where('storeid', storeid)
@@ -87,7 +86,7 @@ module.exports = {
           });
     };
 
-    /*
+    
     await s3.deleteObject({
       Bucket: process.env.BUCKET_NAME,
       Key: store.logoname,
@@ -95,9 +94,7 @@ module.exports = {
       if (err) console.log(err, err.stack);
       else     console.log(data);    
     });
-    */
-
-    //console.log(store.logoname);
+    
     await connection('stores').where('storeid',storeid).delete();
     
     return response.status(204).send();
